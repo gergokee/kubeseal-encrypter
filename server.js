@@ -10,6 +10,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/api/status', (req, res) => {
+    return res.status(200).json({ status: 'ok' });
+});
+
 app.post('/api/encrypt', (req, res) => {
     // Get the data from the request body
     const data = req.body.data;
