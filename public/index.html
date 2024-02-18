@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input Output</title>
+    <style>
+        .column {
+            float: left;
+            width: calc(50% - 20px);
+            padding: 10px;
+            margin: 10px;
+            box-sizing: border-box;
+            border: 1px solid #CCC;
+            border-radius: 5px;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .wrapper {
+            position: relative;
+            height: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            height: 400px;
+            color: #444;
+        }
+        .copy-btn-abs-pos {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+        }
+        .copy-btn {
+            width: 20px;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 9;
+        }
+        h2 {
+            border-bottom: 1px solid;
+            padding-bottom: 10px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 60px;
+            background-color: #3f3c3c;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -30px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .error {
+            color: #d60d0d;
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="column">
+            <div class="wrapper">
+                <h2>Input</h2>
+                <textarea id="input" oninput="postInput()"></textarea>
+            </div>
+        </div>
+        <div class="column">
+            <div class="wrapper">
+                <h2>Output</h2>
+                <textarea id="output" readonly></textarea>
+                <div class="copy-btn-abs-pos" id="copy-btn-abs-pos">
+                    <div class="tooltip">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-btn" id="copy-btn" title="Copy to clipboard">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span class="tooltiptext">Copy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        function postInput() {
+            clearTimeout(timer);
+            var input = document.getElementById('input').value;
+            var output = document.getElementById('output');
+            output.classList.remove("error");
+            output.value = "Please wait...";
+            timer = setTimeout(function() {
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", '/api/encrypt', true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                        output.value = this.responseText;
+                    } else if (this.status !== 200) {
+                        output.classList.add("error");
+                        output.value = this.responseText;
+                    }
+                }
+                xhr.send('data=' + encodeURIComponent(input));
+            }, 1000); // delay in milliseconds
+        }
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            var output = document.getElementById('output');
+            output.select();
+            document.execCommand('copy');
+            var tooltipText = document.querySelector('.tooltip .tooltiptext');
+            tooltipText.textContent = 'Copied';
+        });
+        document.getElementById('copy-btn').addEventListener('mouseleave', function() {
+            var tooltipText = document.querySelector('.tooltip .tooltiptext');
+            tooltipText.textContent = 'Copy';
+        });
+    </script>
+</body>
+</html>

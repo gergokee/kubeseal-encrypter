@@ -1,0 +1,13 @@
+{
+  "name": "kubeseal-helper",
+  "version": "1.0.0",
+  "description": "A simple kubeseal helper Express server with kubeseal cli",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  }
+}

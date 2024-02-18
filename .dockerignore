@@ -1,0 +1,9 @@
+.env*
+.git
+.github
+.dockerignore
+.docker/*
+Homestead.json
+Homestead.yaml
+.DS_Store
+node_modules

@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  kubeseal-encrypter:
+    image: kubeseal-encrypter
+    container_name: kubeseal-encrypter
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    ports:
+      - 4444:8080
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    tty: true
