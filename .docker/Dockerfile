@@ -24,8 +24,6 @@ RUN apt-get update && apt-get install -y wget && \
     install -m 755 kubeseal /usr/local/bin/kubeseal && \
     rm -f kubeseal
 
-# Expose the port the app runs on
+COPY . .
 EXPOSE 8080
-
-# Run the web service on container startup.
 CMD [ "npm", "start" ]
