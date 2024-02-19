@@ -1,5 +1,5 @@
 # Kubeseal encrypter
-An app to help you encrypt multiple secrets to make life easier.
+An a very simple nodeJS app to help you encrypt multiple secrets to make life easier.
 
 ## How to use
 * Add your .crt file under sealed-secrets directory, run the app with docker and enjoy.
