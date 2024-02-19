@@ -88,13 +88,13 @@
         <div class="column">
             <div class="wrapper">
                 <h2>Input</h2>
-                <textarea id="input" oninput="postInput()"></textarea>
+                <textarea id="input" oninput="postInput()" autocomplete="off"></textarea>
             </div>
         </div>
         <div class="column">
             <div class="wrapper">
                 <h2>Output</h2>
-                <textarea id="output" readonly></textarea>
+                <textarea id="output" readonly autocomplete="off"></textarea>
                 <div class="copy-btn-abs-pos" id="copy-btn-abs-pos">
                     <div class="tooltip">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-btn" id="copy-btn" title="Copy to clipboard">
