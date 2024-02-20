@@ -17,22 +17,46 @@ app.get('/api/status', (req, res) => {
 app.post('/api/encrypt', (req, res) => {
     // Get the data from the request body
     const data = req.body.data;
+    const isRaw = req.body.isRaw;
+
+    const processRawData = (data) => {
+        let index = data.search(/[:=]/);
+        if (index !== -1) {
+            let firstPart = data.slice(0, index);
+            let secondPart = data.slice(index + 1);
+            return firstPart + "=" + secondPart;
+        }
+        return data;
+    }
 
     // Split each line, strip white spaces and send back this as response
-    const processedData = data.split('\n').map(line => {
-        // Split the line by ':' or '='
-        const parts = line.split(/[:=]/).map(part => part.trim());
-        return parts.join('=');
-    });
+    const processData = (data) => {
+        return data.split('\n').filter(line => line.trim() !== '').map(line => {
+            // Find the first occurrence of ':' or '='
+            const index = Math.min(...[':', '='].map(sep => line.indexOf(sep)).filter(index => index !== -1));
+            if (index === -1) {
+                return line.trim();
+            }
+            // Split the line into two parts
+            const parts = [line.slice(0, index), line.slice(index + 1)].map(part => part.trim());
+            // Add quotes around the second part
+            if (parts.length > 1) {
+                parts[1] = `'${parts[1]}'`;
+            }
+            
+            return parts.join('=');
+        });
+    } 
 
+        const rawCommands = `--from-literal='${processRawData(data)}' \\`;
         // Construct the kubectl and kubeseal commands
-        const commands = processedData.map(line => {
+        const commands = processData(data).reverse().map(line => {
             return `--from-literal=${line} \\`;
         }).join('\n');
 
         const command = `
     kubectl create secret generic mysecret \\
-    ${commands}
+    ${isRaw === 'true' ? rawCommands : commands}
     --dry-run=client -oyaml | kubeseal \\
     --cert /usr/src/app/sealed-secrets/sealed.crt \\
     --format yaml --scope=cluster-wide | yq e '.spec.encryptedData' -

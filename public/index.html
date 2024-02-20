@@ -19,6 +19,18 @@
             display: table;
             clear: both;
         }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            border-bottom: 1px solid;
+            padding-bottom: 10px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
         .wrapper {
             position: relative;
             height: 100%;
@@ -40,10 +52,6 @@
             cursor: pointer;
             padding: 8px;
             z-index: 9;
-        }
-        h2 {
-            border-bottom: 1px solid;
-            padding-bottom: 10px;
         }
         .tooltip {
             position: relative;
@@ -89,13 +97,21 @@
     <div class="row">
         <div class="column">
             <div class="wrapper">
-                <h2>Input</h2>
+                <div class="header">
+                    <h2>Input</h2>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="isRaw" name="isRaw" value="isRaw" onchange="postInput()">
+                        <label for="isRaw">Send raw value(everything including new line and whitespaces)</label>
+                    </div>
+                </div>
                 <textarea id="input" oninput="postInput()" autocomplete="off"></textarea>
             </div>
         </div>
         <div class="column">
             <div class="wrapper">
-                <h2>Output</h2>
+                <div class="header">
+                    <h2>Output</h2>
+                </div>
                 <textarea id="output" readonly autocomplete="off"></textarea>
                 <div class="copy-btn-abs-pos" id="copy-btn-abs-pos">
                     <div class="tooltip">
@@ -115,6 +131,7 @@
         function postInput() {
             clearTimeout(timer);
             var input = document.getElementById('input').value;
+            var isRaw = document.getElementById('isRaw').checked;
             var output = document.getElementById('output');
             output.classList.remove("error");
             output.value = "Please wait...";
@@ -132,7 +149,7 @@
                         output.value = this.responseText;
                     }
                 }
-                xhr.send('data=' + encodeURIComponent(input));
+                xhr.send('data=' + encodeURIComponent(input) + '&isRaw=' + isRaw);
             }, 1000); // delay in milliseconds
         }
         document.getElementById('copy-btn').addEventListener('click', function() {
